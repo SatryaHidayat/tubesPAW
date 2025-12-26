@@ -11,12 +11,17 @@ use App\Http\Controllers\Admin\PromoController as AdminPromoController;
 Route::get('/', function () {
     return redirect('/login');
 });
+
 Auth::routes();
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-
     Route::get('/menus', [OrderController::class, 'index'])->name('user.menus');
+
+    Route::post('/checkout', [OrderController::class, 'store'])->name('user.checkout');
+    Route::get('/history', [OrderController::class, 'history'])->name('order.history');
 });
+
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')
