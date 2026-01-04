@@ -29,13 +29,23 @@
                     @forelse($menus as $menu)
                     <tr>
                         <td>
-                            <img src="{{ asset('storage/' . $menu->foto) }}" alt="foto" width="80" class="rounded">
+                            <img src="{{ asset('storage/' . $menu->foto) }}" alt="foto" width="80" class="rounded shadow-sm">
                         </td>
                         <td class="fw-bold">{{ $menu->nama_menu }}</td>
                         <td>Rp {{ number_format($menu->harga, 0, ',', '.') }}</td>
                         <td>
-                            <span class="badge {{ $menu->kategori == 'makanan' ? 'bg-warning' : 'bg-info' }}">
-                                {{ ucfirst($menu->kategori) }}
+                            @php
+                                $badgeColor = match($menu->kategori) {
+                                    'kopi' => 'bg-dark text-white',
+                                    'non-kopi' => 'bg-info text-dark',
+                                    'makanan' => 'bg-warning text-dark',
+                                    'snack' => 'bg-success text-white',
+                                    default => 'bg-secondary text-white',
+                                };
+                            @endphp
+
+                            <span class="badge {{ $badgeColor }}">
+                                {{ strtoupper(str_replace('-', ' ', $menu->kategori)) }}
                             </span>
                         </td>
                         <td>
