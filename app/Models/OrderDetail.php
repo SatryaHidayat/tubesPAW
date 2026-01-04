@@ -13,9 +13,8 @@ class OrderDetail extends Model
         'order_id',
         'menu_id',
         'jumlah',
-        'harga_saat_ini',
-        'subtotal',
-        'catatan'
+        'harga_saat_ini', // Pastikan nama ini sama dengan di controller & database
+        'subtotal',       // <--- INI WAJIB ADA
     ];
 
     public function menu()

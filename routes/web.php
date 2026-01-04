@@ -7,6 +7,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Admin\MenuController as AdminMenuController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PromoController as AdminPromoController;
+use App\Http\Controllers\AdminPaymentController;
 
 Route::post('/checkout', [App\Http\Controllers\OrderController::class, 'store'])->name('user.checkout');
 Route::get('/', function () {
@@ -23,6 +24,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/history', [OrderController::class, 'history'])->name('order.history');
 });
 
+Route::get('/pembayaran/{id}', [OrderController::class, 'pembayaran'])
+    ->name('order.pembayaran');
+
+Route::post('/pembayaran/{id}', [OrderController::class, 'prosesPembayaran'])
+    ->name('order.prosesPembayaran');
+
+
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')
@@ -34,3 +42,14 @@ Route::middleware(['auth', 'admin'])
         Route::resource('promos', AdminPromoController::class);
         Route::resource('orders', AdminOrderController::class)->only(['index', 'update']);
     });
+
+Route::middleware(['auth', 'is_admin'])->group(function () {
+    Route::get('/admin/pembayaran', [AdminPaymentController::class, 'index'])
+        ->name('admin.pembayaran.index');
+});
+
+Route::get('/pembayaran/{id}', [OrderController::class, 'pembayaran'])
+    ->name('order.pembayaran');
+
+Route::post('/pembayaran/{id}', [OrderController::class, 'prosesPembayaran'])
+    ->name('order.prosesPembayaran');

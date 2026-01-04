@@ -12,6 +12,38 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
+    public function prosesPembayaran(Request $request, $id)
+    {
+        $request->validate([
+            'metode_pembayaran' => 'required'
+        ]);
+
+        $order = Order::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->where('status_pembayaran', 'belum_bayar')
+            ->firstOrFail();
+
+        $order->update([
+            'metode_pembayaran' => $request->metode_pembayaran,
+            'status_pembayaran' => 'dibayar',
+            'waktu_bayar' => now(),
+            'status' => 'selesai'
+        ]);
+
+        return redirect()
+            ->route('order.history')
+            ->with('success', 'Pembayaran berhasil!');
+    }
+
+    public function pembayaran($id)
+    {
+        $order = Order::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        return view('user.pembayaran', compact('order'));
+    }
+
     // === 1. HALAMAN DAFTAR MENU ===
     public function index(Request $request)
     {
@@ -28,7 +60,7 @@ class OrderController extends Controller
         ]);
     }
 
-    // === 2. PROSES CHECKOUT ===
+    // === 2. PROSES CHECKOUT (BAGIAN YANG DIPERBAIKI) ===
     public function store(Request $request)
     {
         $request->validate([
@@ -58,19 +90,30 @@ class OrderController extends Controller
                 'user_id' => Auth::id(),
                 'status' => 'diproses',
                 'total_harga' => 0,
+                'status_pembayaran' => 'belum_bayar',
             ]);
 
             $totalBelanja = 0;
 
             foreach ($items as $menu_id => $qty) {
                 $menu = Menu::find($menu_id);
+
+                // --- PERBAIKAN DIMULAI DI SINI ---
+
+                // 1. Hitung subtotal
+                $subtotal = $menu->harga * $qty;
+
                 OrderDetail::create([
                     'order_id' => $order->id,
                     'menu_id' => $menu_id,
                     'jumlah' => $qty,
                     'harga_saat_ini' => $menu->harga,
+                    'subtotal' => $subtotal, // 2. Masukkan subtotal ke database
                 ]);
-                $totalBelanja += ($menu->harga * $qty);
+
+                $totalBelanja += $subtotal;
+
+                // --- PERBAIKAN SELESAI ---
             }
 
             $hasilKurang = $totalBelanja - $potongan;
