@@ -80,7 +80,7 @@ class OrderController extends Controller
         });
 
         $msg = 'Pesanan berhasil dibuat!';
-        if($potongan > 0) {
+        if ($potongan > 0) {
             $msg .= " (Anda hemat Rp " . number_format($potongan, 0, ',', '.') . ")";
         }
 
@@ -91,9 +91,9 @@ class OrderController extends Controller
     public function history()
     {
         $orders = Order::where('user_id', Auth::id())
-                        ->with('details.menu')
-                        ->orderByDesc('created_at')
-                        ->get();
+            ->with('details.menu')
+            ->orderByDesc('created_at')
+            ->get();
 
         return view('user.history', [
             'orders' => $orders

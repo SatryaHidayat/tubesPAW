@@ -9,16 +9,13 @@ class MenuSeeder extends Seeder
 {
     public function run()
     {
-        // Pastikan nama file gambar di bawah ini SUDAH ADA di folder:
-        // storage/app/public/menus/
-
         $menus = [
             // --- COFFEE ---
             [
                 'nama_menu' => 'Americano',
                 'harga' => 12000,
                 'kategori' => 'coffee',
-                'foto' => 'menus/americano.png', // Sesuaikan nama file gambarmu
+                'foto' => 'menus/american.jpeg', // Sesuaikan nama file gambarmu
                 'deskripsi' => 'Kopi hitam murni tanpa gula',
                 'created_at' => now(), 'updated_at' => now(),
             ],
@@ -26,7 +23,7 @@ class MenuSeeder extends Seeder
                 'nama_menu' => 'Kopi Susu',
                 'harga' => 12000,
                 'kategori' => 'coffee',
-                'foto' => 'menus/kopi_susu.png',
+                'foto' => 'menus/kopi_sus.jpeg',
                 'deskripsi' => 'Perpaduan kopi dan susu segar',
                 'created_at' => now(), 'updated_at' => now(),
             ],
@@ -34,7 +31,7 @@ class MenuSeeder extends Seeder
                 'nama_menu' => 'Capucino',
                 'harga' => 15000,
                 'kategori' => 'coffee',
-                'foto' => 'menus/capucino.png',
+                'foto' => 'menus/capucin.jpeg',
                 'deskripsi' => 'Espresso, susu, dan foam tebal',
                 'created_at' => now(), 'updated_at' => now(),
             ],
@@ -44,7 +41,7 @@ class MenuSeeder extends Seeder
                 'nama_menu' => 'Mie Goreng',
                 'harga' => 13000,
                 'kategori' => 'food',
-                'foto' => 'menus/mie_goreng.png',
+                'foto' => 'menus/mie_goren.jpeg',
                 'deskripsi' => 'Mie goreng spesial telur',
                 'created_at' => now(), 'updated_at' => now(),
             ],
@@ -52,7 +49,7 @@ class MenuSeeder extends Seeder
                 'nama_menu' => 'Nasi Ayam',
                 'harga' => 15000,
                 'kategori' => 'food',
-                'foto' => 'menus/nasi_ayam.png',
+                'foto' => 'menus/nasi_aya.jpeg',
                 'deskripsi' => 'Nasi dengan ayam bumbu rempah',
                 'created_at' => now(), 'updated_at' => now(),
             ],

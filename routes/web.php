@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\MenuController as AdminMenuController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PromoController as AdminPromoController;
 
+Route::post('/checkout', [App\Http\Controllers\OrderController::class, 'store'])->name('user.checkout');
 Route::get('/', function () {
     return redirect('/login');
 });
