@@ -45,7 +45,7 @@
                     <div class="modal fade" id="orderModal{{ $menu->id }}" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content rounded-4 border-0">
-                                <div class="modal-header border-0">
+                                <div class="modal-header border-0 pb-0">
                                     <h5 class="modal-title fw-bold">Pesan {{ $menu->nama_menu }}</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
@@ -55,36 +55,43 @@
                                     <div class="modal-body">
                                         <input type="hidden" name="menu_id" value="{{ $menu->id }}">
 
-                                        <div class="row g-3">
-                                            <div class="col-4">
-                                                <img src="{{ asset('storage/' . $menu->foto) }}" class="img-fluid rounded-3" alt="{{ $menu->nama_menu }}">
+                                        <div class="d-flex gap-3 mb-4">
+                                            <div class="flex-shrink-0">
+                                                <img src="{{ asset('storage/' . $menu->foto) }}" class="rounded-3 border" style="width: 100px; height: 100px; object-fit: cover;">
                                             </div>
-                                            <div class="col-8">
-                                                <p class="mb-1 text-muted small">Harga Satuan</p>
-                                                <h6 class="fw-bold text-primary">Rp{{ number_format($menu->harga, 0, ',', '.') }}</h6>
+                                            <div class="flex-grow-1">
+                                                <small class="text-muted d-block">Harga Satuan</small>
+                                                <h5 class="fw-bold text-primary mb-3">Rp{{ number_format($menu->harga, 0, ',', '.') }}</h5>
 
-                                                <div class="mt-3">
-                                                    <label class="form-label small fw-bold">Jumlah</label>
-                                                    <input type="number" name="jumlah" class="form-control" value="1" min="1" required>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <small class="fw-bold">Jumlah:</small>
+                                                    <input type="number" name="jumlah" class="form-control form-control-sm text-center" value="1" min="1" style="width: 70px;" required>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="mt-3">
-                                            <label class="form-label small fw-bold">Catatan (Opsional)</label>
-                                            <input type="text" name="catatan" class="form-control" placeholder="Contoh: Less sugar, Tanpa es...">
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-bold mb-1">Catatan (Opsional)</label>
+                                            <input type="text" name="catatan" class="form-control bg-light border-0" placeholder="Cth: Less sugar, Tanpa es...">
+                                        </div>
+
+                                        <div class="mb-1">
+                                            <label class="form-label small fw-bold mb-1 text-success">
+                                                <i class="bi bi-ticket-perforated-fill"></i> Kode Promo
+                                            </label>
+                                            <input type="text" name="kode_promo" class="form-control border-success text-success" placeholder="Masukkan kode voucher..." style="text-transform: uppercase;">
                                         </div>
                                     </div>
 
-                                    <div class="modal-footer border-0">
-                                        <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">Batal</button>
+                                    <div class="modal-footer border-0 pt-0">
+                                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
                                         <button type="submit" class="btn btn-primary rounded-pill px-4">Pesan Sekarang</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
                     </div>
-                </div>
+                    </div>
                 @empty
                 <div class="col-12 py-5 text-center">
                     <div class="alert alert-light" role="alert">
@@ -99,30 +106,16 @@
 </div>
 
 <style>
-    .sidebar-nav .nav-link {
-        transition: all 0.2s;
-    }
+    /* CSS Tambahan */
+    .sidebar-nav .nav-link { transition: all 0.2s; }
     .sidebar-nav .nav-link:hover, .sidebar-nav .nav-link.active {
-        color: #000 !important;
-        background-color: #f8f9fa;
-        border-radius: 8px;
+        color: #000 !important; background-color: #f8f9fa; border-radius: 8px;
     }
-
     .product-card {
-        transition: transform 0.2s, box-shadow 0.2s;
-        background-color: #ffffff;
-        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s; background-color: #ffffff; cursor: pointer;
     }
-
     .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
-    }
-
-    .modal-body img {
-        object-fit: cover;
-        width: 100%;
-        height: 100px;
+        transform: translateY(-5px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
     }
 </style>
 @endsection

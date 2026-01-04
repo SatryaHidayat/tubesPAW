@@ -1,55 +1,74 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h2 class="fw-bold mb-4">Riwayat Pesanan Saya</h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <h3 class="fw-bold mb-4">Riwayat Pesanan</h3>
 
-    @if(session('success'))
-        <div class="alert alert-success mb-4">
-            <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
-        </div>
-    @endif
+            @forelse($orders as $order)
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-white border-0 pt-3 px-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted d-block">Tanggal Pesanan</small>
+                        <span class="fw-bold">{{ $order->created_at->format('d M Y, H:i') }}</span>
+                    </div>
 
-    <div class="row">
-        @forelse($orders as $order)
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-sm h-100 border-0">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-                    <span class="fw-bold">Order #{{ $order->id }}</span>
-                    <span class="text-muted small">{{ $order->created_at->diffForHumans() }}</span>
+                    @php
+                        $badgeClass = match($order->status) {
+                            'pending' => 'bg-warning text-dark',
+                            'diproses' => 'bg-info text-white',
+                            'siap' => 'bg-primary text-white',
+                            'selesai' => 'bg-success text-white',
+                            'batal' => 'bg-danger text-white',
+                            default => 'bg-secondary text-white',
+                        };
+                    @endphp
+                    <span class="badge {{ $badgeClass }} rounded-pill px-3 py-2">
+                        {{ ucfirst($order->status) }}
+                    </span>
                 </div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush mb-3">
-                        @foreach($order->details as $detail)
-                        <li class="list-group-item d-flex justify-content-between px-0">
-                            <div>{{ $detail->jumlah }}x {{ $detail->menu->nama_menu }}</div>
-                            <span>Rp {{ number_format($detail->harga_saat_ini * $detail->jumlah) }}</span>
-                        </li>
-                        @endforeach
-                    </ul>
 
-                    <div class="d-flex justify-content-between align-items-center border-top pt-3">
-                        <h5 class="fw-bold mb-0">Total: Rp {{ number_format($order->total_harga) }}</h5>
+                <div class="card-body px-4">
+                    @foreach($order->details as $detail)
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{{ asset('storage/' . $detail->menu->foto) }}"
+                             style="width: 60px; height: 60px; object-fit: cover; border-radius: 10px;"
+                             class="me-3">
 
-                        @if($order->status == 'diproses')
-                            <span class="badge bg-warning text-dark">Sedang Diproses</span>
-                        @elseif($order->status == 'siap')
-                            <span class="badge bg-info text-dark">Pesanan Siap!</span>
-                        @elseif($order->status == 'selesai')
-                            <span class="badge bg-success">Selesai</span>
-                        @else
-                            <span class="badge bg-danger">Dibatalkan</span>
-                        @endif
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0 fw-bold">{{ $detail->menu->nama_menu }}</h6>
+                            <small class="text-muted">
+                                {{ $detail->jumlah }}x Rp{{ number_format($detail->harga_satuan, 0, ',', '.') }}
+                            </small>
+                            @if($detail->catatan)
+                            <br><small class="text-danger fst-italic">Note: {{ $detail->catatan }}</small>
+                            @endif
+                        </div>
+
+                        <div class="fw-bold">
+                            Rp{{ number_format($detail->subtotal, 0, ',', '.') }}
+                        </div>
+                    </div>
+                    @endforeach
+
+                    <hr class="my-3">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Total Bayar</span>
+                        <h5 class="fw-bold text-primary mb-0">Rp{{ number_format($order->total_harga, 0, ',', '.') }}</h5>
                     </div>
                 </div>
             </div>
+            @empty
+            <div class="text-center py-5">
+                <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" width="100" class="mb-3 opacity-50">
+                <h5 class="text-muted">Belum ada riwayat pesanan.</h5>
+                <a href="{{ route('user.menus') }}" class="btn btn-primary rounded-pill mt-3">Pesan Sekarang</a>
+            </div>
+            @endforelse
+
         </div>
-        @empty
-        <div class="col-12 text-center py-5">
-            <div class="text-muted mb-3">Belum ada riwayat pesanan.</div>
-            <a href="{{ route('user.menus') }}" class="btn btn-primary">Pesan Sekarang</a>
-        </div>
-        @endforelse
     </div>
 </div>
 @endsection
