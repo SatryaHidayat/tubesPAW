@@ -2,40 +2,101 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Menu;  // Import Model Menu
-use App\Models\Order; // Import Model Order (jika dibutuhkan untuk checkout)
+use App\Models\Menu;
+use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\Promo;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    /**
-     * Menampilkan halaman daftar menu (Sesuai Desain Figma)
-     */
-    public function index()
+    // === 1. HALAMAN DAFTAR MENU ===
+    public function index(Request $request)
     {
-        // Ambil semua menu
-        $menus = Menu::all();
+        $query = Menu::query();
 
-        // Kirim ke view 'user.menus' (pastikan filenya ada di resources/views/user/menus.blade.php)
-        return view('user.menus', compact('menus'));
+        if ($request->has('kategori') && $request->kategori != '') {
+            $query->where('kategori', $request->kategori);
+        }
+
+        $menus = $query->get();
+
+        return view('user.menu_list', [
+            'menus' => $menus
+        ]);
     }
 
-    /**
-     * Menangani proses checkout/pemesanan
-     */
+    // === 2. PROSES CHECKOUT ===
     public function store(Request $request)
     {
-        // Logika checkout kamu (biarkan atau sesuaikan nanti)
-        return redirect()->route('order.history')->with('success', 'Pesanan berhasil dibuat!');
+        $request->validate([
+            'pesanan' => 'required|array',
+        ]);
+
+        $items = array_filter($request->pesanan, function ($qty) {
+            return $qty > 0;
+        });
+
+        if (empty($items)) {
+            return redirect()->back()->with('error', 'Pilih minimal 1 menu!');
+        }
+
+        // Cek Promo
+        $potongan = 0;
+        if ($request->filled('kode_promo')) {
+            $cekPromo = Promo::where('kode', strtoupper($request->kode_promo))->first();
+            if (!$cekPromo) {
+                return redirect()->back()->with('error', 'Kode Promo Salah / Tidak Ditemukan!');
+            }
+            $potongan = $cekPromo->diskon;
+        }
+
+        DB::transaction(function () use ($items, $potongan) {
+            $order = Order::create([
+                'user_id' => Auth::id(),
+                'status' => 'diproses',
+                'total_harga' => 0,
+            ]);
+
+            $totalBelanja = 0;
+
+            foreach ($items as $menu_id => $qty) {
+                $menu = Menu::find($menu_id);
+                OrderDetail::create([
+                    'order_id' => $order->id,
+                    'menu_id' => $menu_id,
+                    'jumlah' => $qty,
+                    'harga_saat_ini' => $menu->harga,
+                ]);
+                $totalBelanja += ($menu->harga * $qty);
+            }
+
+            $hasilKurang = $totalBelanja - $potongan;
+            $grandTotal = ($hasilKurang < 0) ? 0 : $hasilKurang;
+
+            $order->update(['total_harga' => $grandTotal]);
+        });
+
+        $msg = 'Pesanan berhasil dibuat!';
+        if($potongan > 0) {
+            $msg .= " (Anda hemat Rp " . number_format($potongan, 0, ',', '.') . ")";
+        }
+
+        return redirect()->route('order.history')->with('success', $msg);
     }
 
-    /**
-     * Menampilkan riwayat pesanan user
-     */
+    // === 3. HALAMAN RIWAYAT ===
     public function history()
     {
-        // Logika history kamu
-        return view('user.history');
+        $orders = Order::where('user_id', Auth::id())
+                        ->with('details.menu')
+                        ->orderByDesc('created_at')
+                        ->get();
+
+        return view('user.history', [
+            'orders' => $orders
+        ]);
     }
 }
