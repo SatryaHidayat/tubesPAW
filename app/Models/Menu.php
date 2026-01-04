@@ -16,4 +16,10 @@ class Menu extends Model
         'foto',
         'kategori'
     ];
+
+
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
 }

@@ -32,12 +32,12 @@
                 <div class="card-body px-4">
                     @foreach($order->details as $detail)
                     <div class="d-flex align-items-center mb-3">
-                        <img src="{{ asset('storage/' . $detail->menu->foto) }}"
+                        <img src="{{ asset('storage/' . ($detail->menu?->foto ?? 'default.jpeg')) }}"
                              style="width: 60px; height: 60px; object-fit: cover; border-radius: 10px;"
                              class="me-3">
 
                         <div class="flex-grow-1">
-                            <h6 class="mb-0 fw-bold">{{ $detail->menu->nama_menu }}</h6>
+                           <h6 class="mb-0 fw-bold"> {{ $detail->menu?->nama_menu ?? 'Menu tidak tersedia' }} </h6>
                             <small class="text-muted">
                                 {{ $detail->jumlah }}x Rp{{ number_format($detail->harga_satuan, 0, ',', '.') }}
                             </small>
