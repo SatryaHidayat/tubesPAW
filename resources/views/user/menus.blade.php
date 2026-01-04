@@ -16,7 +16,6 @@
         </div>
 
         <div class="col-md-10 pt-3 pb-5">
-
             <div class="card border-0 rounded-4 overflow-hidden mb-4 shadow-sm">
                 <img src="{{ asset('images/banner.jpg') }}" class="card-img-top" style="height: 250px; object-fit: cover;" alt="Banner Promo">
             </div>
@@ -33,12 +32,56 @@
                             <h6 class="card-title fw-bold mb-1 text-dark" style="font-size: 0.95rem;">
                                 {{ $menu->nama_menu }}
                             </h6>
-
                             <p class="card-text fw-bold text-secondary small mb-2">
                                 Rp{{ number_format($menu->harga, 0, ',', '.') }}
                             </p>
 
-                            <button class="btn btn-sm btn-outline-dark rounded-pill px-3">Add</button>
+                            <button type="button" class="btn btn-sm btn-outline-dark rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#orderModal{{ $menu->id }}">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="orderModal{{ $menu->id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content rounded-4 border-0">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title fw-bold">Pesan {{ $menu->nama_menu }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+
+                                <form action="{{ route('user.checkout') }}" method="POST">
+                                    @csrf
+                                    <div class="modal-body">
+                                        <input type="hidden" name="menu_id" value="{{ $menu->id }}">
+
+                                        <div class="row g-3">
+                                            <div class="col-4">
+                                                <img src="{{ asset('storage/' . $menu->foto) }}" class="img-fluid rounded-3" alt="{{ $menu->nama_menu }}">
+                                            </div>
+                                            <div class="col-8">
+                                                <p class="mb-1 text-muted small">Harga Satuan</p>
+                                                <h6 class="fw-bold text-primary">Rp{{ number_format($menu->harga, 0, ',', '.') }}</h6>
+
+                                                <div class="mt-3">
+                                                    <label class="form-label small fw-bold">Jumlah</label>
+                                                    <input type="number" name="jumlah" class="form-control" value="1" min="1" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-3">
+                                            <label class="form-label small fw-bold">Catatan (Opsional)</label>
+                                            <input type="text" name="catatan" class="form-control" placeholder="Contoh: Less sugar, Tanpa es...">
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer border-0">
+                                        <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">Batal</button>
+                                        <button type="submit" class="btn btn-primary rounded-pill px-4">Pesan Sekarang</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -51,28 +94,35 @@
                 </div>
                 @endforelse
             </div>
-
         </div>
     </div>
 </div>
 
 <style>
-    /* Hover effect sidebar */
+    .sidebar-nav .nav-link {
+        transition: all 0.2s;
+    }
     .sidebar-nav .nav-link:hover, .sidebar-nav .nav-link.active {
         color: #000 !important;
         background-color: #f8f9fa;
         border-radius: 8px;
     }
 
-    /* Hover effect card produk */
     .product-card {
         transition: transform 0.2s, box-shadow 0.2s;
         background-color: #ffffff;
         cursor: pointer;
     }
+
     .product-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+
+    .modal-body img {
+        object-fit: cover;
+        width: 100%;
+        height: 100px;
     }
 </style>
 @endsection
