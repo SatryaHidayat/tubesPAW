@@ -44,7 +44,41 @@ class OrderController extends Controller
         return view('user.pembayaran', compact('order'));
     }
 
-    // === 1. HALAMAN DAFTAR MENU ===
+    // === FUNGSI APPLY PROMO DI HALAMAN PEMBAYARAN ===
+    public function applyPromoPembayaran(Request $request, $id)
+    {
+        $request->validate([
+            'kode_promo' => 'required'
+        ]);
+
+        $promo = Promo::where('kode', strtoupper($request->kode_promo))->first();
+
+        if (!$promo) {
+            return redirect()->back()->with('error', 'Kode Promo Salah / Tidak Ditemukan!');
+        }
+
+        $order = Order::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->where('status_pembayaran', 'belum_bayar')
+            ->firstOrFail();
+
+        // Cegah penggunaan promo ganda
+        if ($order->diskon > 0) {
+            return redirect()->back()->with('error', 'Promo sudah terpasang pada pesanan ini!');
+        }
+
+        $potongan = $promo->diskon;
+        $hasilKurang = $order->total_harga - $potongan;
+        $grandTotal = ($hasilKurang < 0) ? 0 : $hasilKurang;
+
+        $order->update([
+            'total_harga' => $grandTotal,
+            'diskon'      => $potongan
+        ]);
+
+        return redirect()->back()->with('success', 'Promo berhasil digunakan! Hemat Rp ' . number_format($potongan, 0, ',', '.'));
+    }
+
     public function index(Request $request)
     {
         $query = Menu::query();
@@ -60,7 +94,7 @@ class OrderController extends Controller
         ]);
     }
 
-    // === 2. PROSES CHECKOUT (BAGIAN YANG DIPERBAIKI) ===
+    // === PROSES CHECKOUT (Logika Promo di Sini Dihapus) ===
     public function store(Request $request)
     {
         $request->validate([
@@ -75,21 +109,12 @@ class OrderController extends Controller
             return redirect()->back()->with('error', 'Pilih minimal 1 menu!');
         }
 
-        // Cek Promo
-        $potongan = 0;
-        if ($request->filled('kode_promo')) {
-            $cekPromo = Promo::where('kode', strtoupper($request->kode_promo))->first();
-            if (!$cekPromo) {
-                return redirect()->back()->with('error', 'Kode Promo Salah / Tidak Ditemukan!');
-            }
-            $potongan = $cekPromo->diskon;
-        }
-
-        DB::transaction(function () use ($items, $potongan) {
+        $orderId = DB::transaction(function () use ($items) {
             $order = Order::create([
                 'user_id' => Auth::id(),
                 'status' => 'diproses',
                 'total_harga' => 0,
+                'diskon' => 0, // Default 0, diisi nanti di halaman pembayaran
                 'status_pembayaran' => 'belum_bayar',
             ]);
 
@@ -97,10 +122,6 @@ class OrderController extends Controller
 
             foreach ($items as $menu_id => $qty) {
                 $menu = Menu::find($menu_id);
-
-                // --- PERBAIKAN DIMULAI DI SINI ---
-
-                // 1. Hitung subtotal
                 $subtotal = $menu->harga * $qty;
 
                 OrderDetail::create([
@@ -108,29 +129,20 @@ class OrderController extends Controller
                     'menu_id' => $menu_id,
                     'jumlah' => $qty,
                     'harga_saat_ini' => $menu->harga,
-                    'subtotal' => $subtotal, // 2. Masukkan subtotal ke database
+                    'subtotal' => $subtotal,
                 ]);
 
                 $totalBelanja += $subtotal;
-
-                // --- PERBAIKAN SELESAI ---
             }
 
-            $hasilKurang = $totalBelanja - $potongan;
-            $grandTotal = ($hasilKurang < 0) ? 0 : $hasilKurang;
+            $order->update(['total_harga' => $totalBelanja]);
 
-            $order->update(['total_harga' => $grandTotal]);
+            return $order->id;
         });
 
-        $msg = 'Pesanan berhasil dibuat!';
-        if ($potongan > 0) {
-            $msg .= " (Anda hemat Rp " . number_format($potongan, 0, ',', '.') . ")";
-        }
-
-        return redirect()->route('order.history')->with('success', $msg);
+        return redirect()->route('order.pembayaran', $orderId)->with('success', 'Pesanan berhasil dibuat!');
     }
 
-    // === 3. HALAMAN RIWAYAT ===
     public function history()
     {
         $orders = Order::where('user_id', Auth::id())
