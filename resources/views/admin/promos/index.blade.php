@@ -41,7 +41,7 @@
                             <tr>
                                 <th>Kode</th>
                                 <th>Diskon</th>
-                                <th>Ket</th>
+                                <th>Keterangan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>

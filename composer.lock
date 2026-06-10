@@ -6973,9 +6973,14 @@
         {
             "name": "pestphp/pest",
             "version": "v3.8.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pestphp/pest.git",
+                "reference": "72cf695554420e21858cda831d5db193db102574"
+            },
             "dist": {
                 "type": "zip",
-                "url": "https://mirrors.cloud.tencent.com/repository/composer/pestphp/pest/v3.8.4/pestphp-pest-v3.8.4.zip",
+                "url": "https://api.github.com/repos/pestphp/pest/zipball/72cf695554420e21858cda831d5db193db102574",
                 "reference": "72cf695554420e21858cda831d5db193db102574",
                 "shasum": ""
             },
@@ -7042,6 +7047,7 @@
                     "Pest\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -7064,6 +7070,16 @@
                 "issues": "https://github.com/pestphp/pest/issues",
                 "source": "https://github.com/pestphp/pest/tree/v3.8.4"
             },
+            "funding": [
+                {
+                    "url": "https://www.paypal.com/paypalme/enunomaduro",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/nunomaduro",
+                    "type": "github"
+                }
+            ],
             "time": "2025-08-20T19:12:42+00:00"
         },
         {
@@ -7173,9 +7189,14 @@
         {
             "name": "pestphp/pest-plugin-laravel",
             "version": "v3.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pestphp/pest-plugin-laravel.git",
+                "reference": "6801be82fd92b96e82dd72e563e5674b1ce365fc"
+            },
             "dist": {
                 "type": "zip",
-                "url": "https://mirrors.cloud.tencent.com/repository/composer/pestphp/pest-plugin-laravel/v3.2.0/pestphp-pest-plugin-laravel-v3.2.0.zip",
+                "url": "https://api.github.com/repos/pestphp/pest-plugin-laravel/zipball/6801be82fd92b96e82dd72e563e5674b1ce365fc",
                 "reference": "6801be82fd92b96e82dd72e563e5674b1ce365fc",
                 "shasum": ""
             },
@@ -7210,6 +7231,7 @@
                     "Pest\\Laravel\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -7226,6 +7248,16 @@
             "support": {
                 "source": "https://github.com/pestphp/pest-plugin-laravel/tree/v3.2.0"
             },
+            "funding": [
+                {
+                    "url": "https://www.paypal.com/paypalme/enunomaduro",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/nunomaduro",
+                    "type": "github"
+                }
+            ],
             "time": "2025-04-21T07:40:53+00:00"
         },
         {
