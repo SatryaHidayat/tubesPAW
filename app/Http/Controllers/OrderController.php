@@ -154,4 +154,14 @@ class OrderController extends Controller
             'orders' => $orders
         ]);
     }
+
+    public function halamanPembayaran($id)
+    {
+        $order = Order::where('id', $id)
+            ->where('user_id', Auth::id()) // Pastikan pesanan ini memang milik user yang sedang login
+            ->where('status_pembayaran', 'belum_bayar')
+            ->firstOrFail();
+
+        return view('user.pembayaran', compact('order'));
+    }
 }
