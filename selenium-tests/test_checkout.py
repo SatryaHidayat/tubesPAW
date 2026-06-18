@@ -6,21 +6,16 @@ import time
 
 class TestCheckout(BaseTest):
 
-    # --- Fungsi Bantuan ---
     def login_dan_ke_menu(self):
-        # Proses login cepat
         self.driver.get(config.BASE_URL)
         self.driver.find_element(By.NAME, "email").send_keys(config.USER_EMAIL)
         self.driver.find_element(By.NAME, "password").send_keys(config.USER_PASSWORD)
         self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
         time.sleep(2)
         
-        # PERBAIKAN DI SINI: Ganti sesuai URL asli yang Anda lihat di browser manual
         self.driver.get(f"{config.BASE_URL}/menus") 
         time.sleep(2)
 
-
-    # K1: Satu item qty > 0
     def test_k1_satu_item_valid(self):
         self.login_dan_ke_menu()
         

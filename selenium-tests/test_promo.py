@@ -34,10 +34,6 @@ class TestPromo(BaseTest):
         except Exception as e:
             print("Tombol Bayar Sekarang di Riwayat tidak ditemukan:", e)
 
-    # ==========================================
-    # KELAS VALID (PROMO + BAYAR)
-    # ==========================================
-
     def test_k1_promo_valid(self):
         self.siapkan_halaman_pembayaran()
         
@@ -75,10 +71,6 @@ class TestPromo(BaseTest):
         
         halaman_teks = self.driver.page_source.lower()
         assert "riwayat pesanan" in halaman_teks or "sukses" in halaman_teks, "K2 Gagal: Backend gagal memproses kode lowercase!"
-
-    # ==========================================
-    # KELAS INVALID & EDGE CASE
-    # ==========================================
 
     def test_k3_promo_tidak_ada(self):
         self.siapkan_halaman_pembayaran()
